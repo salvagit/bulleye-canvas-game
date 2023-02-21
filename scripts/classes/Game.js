@@ -6,6 +6,8 @@ class Game {
     this.canvas = canvas;
     this.width = this.canvas.width;
     this.height = this.canvas.height;
+
+    this.topMargin = 260;
     this.player = new Player(this);
 
     this.numberOfObstacles = 10;
@@ -45,35 +47,47 @@ class Game {
   render(context) {
     this.imageGrass.onload = () => {
       context.drawImage(this.imageGrass, 0, 0);
-    }
+    };
 
     this.player.draw(context);
     this.player.update();
 
-    this.obstacles.forEach(obstacle => obstacle.draw(context));
+    this.obstacles.forEach((obstacle) => obstacle.draw(context));
   }
 
   init() {
     let attempts = 0;
 
-    while(this.obstacles.length < this.numberOfObstacles && attempts < 500) {
+    while (this.obstacles.length < this.numberOfObstacles && attempts < 500) {
       const testObstacle = new Obstacle(this);
       let overlap = false;
 
-      this.obstacles.forEach(obstacle => {
+      this.obstacles.forEach((obstacle) => {
         const dx = testObstacle.collisionX - obstacle.collisionX;
         const dy = testObstacle.collisionY - obstacle.collisionY;
 
         const distance = Math.hypot(dy, dx);
+        const distanceBuffer = 150;
 
-        const sumOfRadii = testObstacle.collisionRadius + obstacle.collisionRadius;
+        const sumOfRadii =
+          testObstacle.collisionRadius +
+          obstacle.collisionRadius +
+          distanceBuffer;
 
-        if (distance < sumOfRadii){
+        if (distance < sumOfRadii) {
           overlap = true;
         }
       });
-      
-      if (!overlap) {
+
+      const margin = testObstacle.collisionRadius * 2;
+
+      if (
+        !overlap &&
+        testObstacle.spriteX > 0 &&
+        testObstacle.spriteX < this.width - testObstacle.width &&
+        testObstacle.collisionY > this.topMargin + margin &&
+        testObstacle.collisionY < this.height - margin
+      ) {
         this.obstacles.push(testObstacle);
       }
 
