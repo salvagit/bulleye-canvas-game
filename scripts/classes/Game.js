@@ -9,18 +9,41 @@ class Game {
     this.mouse = {
       x: this.width * 0.5,
       x: this.height * 0.5,
-      pressed: false
-    }
+      pressed: false,
+    };
+
+    // @todo: fix overlay image after requestAnimationFrame.
+    this.imageGrass = new Image();
+    this.imageGrass.src = "../images/overlay.png";
 
     // event listeners.
-    canvas.addEventListener('click', (evt) => {
-      const { offsetX, offsetY } = evt;
-      console.log({ offsetX, offsetY });
-    }, false);
+    canvas.addEventListener("mousedown", ({ offsetX, offsetY }) => {
+      this.mouse.x = offsetX;
+      this.mouse.y = offsetY;
+      this.pressed = true;
+    });
+
+    canvas.addEventListener("mouseup", ({ offsetX, offsetY }) => {
+      this.mouse.x = offsetX;
+      this.mouse.y = offsetY;
+      this.pressed = false;
+    });
+
+    canvas.addEventListener("mousemove", ({ offsetX, offsetY }) => {
+      if (this.mouse.pressed) {
+        this.mouse.x = offsetX;
+        this.mouse.y = offsetY;
+      }
+    });
   }
 
-  render (context) {
+  render(context) {
+    this.imageGrass.onload = () => {
+      context.drawImage(this.imageGrass, 0, 0);
+    }
+
     this.player.draw(context);
+    this.player.update();
   }
 }
 

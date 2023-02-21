@@ -6,10 +6,6 @@ window.addEventListener("load", () => {
 
   const ctx = canvas.getContext("2d");
 
-  const image = new Image();
-  image.addEventListener('load', () => ctx.drawImage(image, 0, 0));
-  image.src = "./images/overlay.png";
-
   canvas.width = 1280;
   canvas.height = 720;
 
@@ -19,9 +15,13 @@ window.addEventListener("load", () => {
 
   const game = new Game(canvas);
 
-  game.render(ctx);
-
   console.info("game rendered.");
+  
+  const animate = () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    game.render(ctx);
+    requestAnimationFrame(animate);
+  };
 
-  const animate = () => {};
+  animate();
 });
