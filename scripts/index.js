@@ -14,9 +14,8 @@ window.addEventListener("load", () => {
   ctx.strokeStyle = "white";
 
   const game = new Game(canvas);
+  game.init();
 
-  console.info("game rendered.");
-  
   const animate = () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     game.render(ctx);
