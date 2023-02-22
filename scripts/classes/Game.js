@@ -49,10 +49,11 @@ class Game {
       context.drawImage(this.imageGrass, 0, 0);
     };
 
+    this.obstacles.forEach((obstacle) => obstacle.draw(context));
+
     this.player.draw(context);
     this.player.update();
 
-    this.obstacles.forEach((obstacle) => obstacle.draw(context));
   }
 
   checkCollision(a, b) {
@@ -63,7 +64,7 @@ class Game {
 
     const sumOfRadii = a.collisionRadius + b.collisionRadius;
 
-    return distance < sumOfRadii;
+    return [distance < sumOfRadii, distance, sumOfRadii, dx, dy];
   }
 
   init() {
