@@ -44,6 +44,13 @@ class Player {
 
     this.collisionX += this.speedX * this.speedModifier;
     this.collisionY += this.speedY * this.speedModifier;
+
+    // collisions with obstacles.
+    this.game.obstacles.forEach(obstacle => {
+      if (this.game.checkCollision(this, obstacle)) {
+        console.log('Colichioni');
+      }
+    });
   }
 }
 
