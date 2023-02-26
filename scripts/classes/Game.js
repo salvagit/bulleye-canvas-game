@@ -35,6 +35,8 @@ class Game {
     this.hatchLings = [];
     this.lostHatchLings = 0;
     this.score = 0;
+    
+    this.particles = [];
 
     this.mouse = {
       x: this.width * 0.5,
@@ -88,6 +90,7 @@ class Game {
         this.player,
         ...this.enemies,
         ...this.hatchLings,
+        ...this.particles,
       ];
 
       // sort by vertical position.
@@ -142,6 +145,7 @@ class Game {
   removeGameObjects() {
     this.eggs = this.eggs.filter((egg) => !egg.markedForDeletion);
     this.hatchLings = this.hatchLings.filter((egg) => !egg.markedForDeletion);
+    this.particles = this.particles.filter((egg) => !egg.markedForDeletion);
   }
 
   init() {

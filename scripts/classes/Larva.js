@@ -1,3 +1,5 @@
+import { Firefly } from "./Firefly.js";
+
 class Larva {
   constructor(game, x, y) {
     this.game = game;
@@ -67,6 +69,9 @@ class Larva {
       this.markedForDeletion = true;
       this.game.removeGameObjects();
       this.game.score++;
+      for (let index = 0; index < 3; index++) {
+        this.game.particles.push(new Firefly(this.game, this.collisionX, this.collisionY, 'yellow'));
+      }
     }
     
     // collision with objects.
