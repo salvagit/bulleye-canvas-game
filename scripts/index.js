@@ -12,9 +12,12 @@ window.addEventListener("load", () => {
   const game = new Game(canvas);
   game.init();
 
-  const animate = () => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    game.render(ctx);
+  let lastTime = 0;
+  const animate = (timeStamp = 0) => {
+    const deltaTime = timeStamp - lastTime;
+    lastTime = timeStamp;
+
+    game.render(ctx, deltaTime);
     requestAnimationFrame(animate);
   };
 

@@ -13,6 +13,12 @@ class Game {
     this.numberOfObstacles = 10;
     this.obstacles = [];
 
+    this.debug = true;
+
+    this.fps = 70;
+    this.timer = 0;
+    this.interval = 1000 / this.fps;
+
     this.mouse = {
       x: this.width * 0.5,
       x: this.height * 0.5,
@@ -42,18 +48,31 @@ class Game {
         this.mouse.y = offsetY;
       }
     });
+
+    window.addEventListener("keydown", ({ key }) => {
+      if (key === 'd') {
+        this.debug = !this.debug;
+      }
+    });
   }
 
-  render(context) {
-    this.imageGrass.onload = () => {
-      context.drawImage(this.imageGrass, 0, 0);
-    };
+  render(context, deltaTime) {
+    // @todo fix grass overlay.
+    // this.imageGrass.onload = () => {
+    //   context.drawImage(this.imageGrass, 0, 0);
+    // };
 
-    this.obstacles.forEach((obstacle) => obstacle.draw(context));
+    if (this.timer > this.interval) {
+      context.clearRect(0, 0, this.width, this.height);
 
-    this.player.draw(context);
-    this.player.update();
+      this.obstacles.forEach((obstacle) => obstacle.draw(context));
+  
+      this.player.draw(context);
+      this.player.update();
 
+      this.timer = 0;
+    }
+    this.timer += deltaTime;
   }
 
   checkCollision(a, b) {
@@ -91,7 +110,7 @@ class Game {
         }
       });
 
-      const margin = testObstacle.collisionRadius * 2;
+      const margin = testObstacle.collisionRadius * 3;
 
       if (
         !overlap &&
