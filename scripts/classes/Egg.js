@@ -10,7 +10,7 @@ class Egg {
 
     this.collisionY =
       this.game.topMargin +
-      (Math.random() * (this.game.height - this.game.topMargin - this.margin));
+      Math.random() * (this.game.height - this.game.topMargin - this.margin);
 
     this.image = document.querySelector(".egg");
 
@@ -20,8 +20,8 @@ class Egg {
     this.width = this.spriteWidth;
     this.height = this.spriteHeight;
 
-    this.spriteX = this.collisionX - this.width * 0.5;
-    this.spriteY = this.collisionY - this.height * 0.5 - 30;
+    this.spriteX;
+    this.spriteY;
   }
 
   draw(context) {
@@ -46,8 +46,24 @@ class Egg {
     }
   }
 
-  update () {
-    
+  update() {
+    this.spriteX = this.collisionX - this.width * 0.5;
+    this.spriteY = this.collisionY - this.height * 0.5 - 30;
+
+    const collisionObjects = [this.game.player, ...this.game.obstacles];
+
+    collisionObjects.forEach((object) => {
+      const [collision, distance, sumOfRadii, dx, dy] =
+        this.game.checkCollision(this, object);
+
+      if (collision) {
+        const unit_x = dx / distance;
+        const unit_y = dy / distance;
+
+        this.collisionX = object.collisionX + (sumOfRadii + 1) * unit_x;
+        this.collisionY = object.collisionY + (sumOfRadii + 1) * unit_y;
+      }
+    });
   }
 }
 

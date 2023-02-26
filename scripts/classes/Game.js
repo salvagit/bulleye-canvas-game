@@ -57,7 +57,7 @@ class Game {
     });
 
     window.addEventListener("keydown", ({ key }) => {
-      if (key === 'd') {
+      if (key === "d") {
         this.debug = !this.debug;
       }
     });
@@ -73,8 +73,11 @@ class Game {
       context.clearRect(0, 0, this.width, this.height);
 
       this.obstacles.forEach((obstacle) => obstacle.draw(context));
-      this.eggs.forEach((egg) => egg.draw(context));
-  
+      this.eggs.forEach((egg) => {
+        egg.draw(context);
+        egg.update();
+      });
+
       this.player.draw(context);
       this.player.update();
 
@@ -86,7 +89,6 @@ class Game {
     if (this.eggTimer > this.eggInterval && this.eggs.length < this.maxEggs) {
       this.addEgg();
       this.eggTimer = 0;
-      console.log(this.eggs)
     } else {
       this.eggTimer += deltaTime;
     }
