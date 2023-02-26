@@ -92,7 +92,7 @@ class Player {
     this.collisionY += this.speedY * this.speedModifier;
 
     this.spriteX = this.collisionX - this.width * 0.5;
-    this.spriteY = this.collisionY - this.height * 0.5;
+    this.spriteY = this.collisionY - this.height * 0.5 - this.collisionRadius * 3.2;
 
     // horizontal boundaries.
     if (this.collisionX < this.collisionRadius) {

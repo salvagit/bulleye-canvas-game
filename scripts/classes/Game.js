@@ -14,9 +14,6 @@ class Game {
     this.numberOfObstacles = 10;
     this.obstacles = [];
 
-    this.maxEggs = 10;
-    this.eggs = [];
-
     this.debug = false;
 
     this.fps = 70;
@@ -25,6 +22,11 @@ class Game {
 
     this.eggTimer = 0;
     this.eggInterval = 500;
+
+    this.maxEggs = 10;
+    this.eggs = [];
+
+    this.gameObjects = [];
 
     this.mouse = {
       x: this.width * 0.5,
@@ -72,14 +74,15 @@ class Game {
     if (this.timer > this.interval) {
       context.clearRect(0, 0, this.width, this.height);
 
-      this.obstacles.forEach((obstacle) => obstacle.draw(context));
-      this.eggs.forEach((egg) => {
-        egg.draw(context);
-        egg.update();
-      });
+      this.gameObjects = [...this.eggs, ...this.obstacles, this.player];
+      
+      // sort by vertical position.
+      this.gameObjects.sort((a, b) => a.collisionY - b.collisionY);
 
-      this.player.draw(context);
-      this.player.update();
+      this.gameObjects.forEach((object) => {
+        object.draw(context);
+        object.update();
+      });
 
       this.timer = 0;
     }
