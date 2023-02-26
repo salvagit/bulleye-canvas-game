@@ -8,6 +8,8 @@ window.addEventListener("load", () => {
   ctx.fillStyle = "white";
   ctx.lineWidth = 3;
   ctx.strokeStyle = "white";
+  ctx.font = "40px Helvetica";
+  ctx.textAlign = "center";
 
   const game = new Game(canvas);
   game.init();

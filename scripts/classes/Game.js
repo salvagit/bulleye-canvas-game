@@ -24,13 +24,17 @@ class Game {
     this.eggTimer = 0;
     this.eggInterval = 500;
 
-    this.maxEggs = 10;
+    this.maxEggs = 3;
     this.eggs = [];
 
     this.maxEnemies = 3;
     this.enemies = [];
 
     this.gameObjects = [];
+
+    this.hatchLings = [];
+    this.lostHatchLings = 0;
+    this.score = 0;
 
     this.mouse = {
       x: this.width * 0.5,
@@ -78,14 +82,20 @@ class Game {
     if (this.timer > this.interval) {
       context.clearRect(0, 0, this.width, this.height);
 
-      this.gameObjects = [...this.eggs, ...this.obstacles, this.player, ...this.enemies];
-      
+      this.gameObjects = [
+        ...this.eggs,
+        ...this.obstacles,
+        this.player,
+        ...this.enemies,
+        ...this.hatchLings,
+      ];
+
       // sort by vertical position.
       this.gameObjects.sort((a, b) => a.collisionY - b.collisionY);
 
       this.gameObjects.forEach((object) => {
         object.draw(context);
-        object.update();
+        object.update(deltaTime);
       });
 
       this.timer = 0;
@@ -99,6 +109,15 @@ class Game {
     } else {
       this.eggTimer += deltaTime;
     }
+
+    // draw status text.
+    context.save();
+    context.textAlign = 'left';
+    context.fillText(`Score: ${this.score}`, 35, 50);
+    if (this.debug) {
+      context.fillText(`Lost: ${this.lostHatchLings}`, 35, 100);
+    }
+    context.restore();
   }
 
   checkCollision(a, b) {
@@ -118,6 +137,11 @@ class Game {
 
   addEnemy() {
     this.enemies.push(new Enemy(this));
+  }
+
+  removeGameObjects() {
+    this.eggs = this.eggs.filter((egg) => !egg.markedForDeletion);
+    this.hatchLings = this.hatchLings.filter((egg) => !egg.markedForDeletion);
   }
 
   init() {
