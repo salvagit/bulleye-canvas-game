@@ -1,24 +1,23 @@
-class Egg {
+class Enemy {
   constructor(game) {
     this.game = game;
 
-    this.collisionRadius = 40;
-    this.margin = this.collisionRadius * 2;
+    this.speedX = Math.random() * 3 + 0.5;
 
-    this.collisionX =
-      this.margin + Math.random() * (this.game.width - this.margin * 2);
+    this.image = document.querySelector(".toad");
 
-    this.collisionY =
-      this.game.topMargin +
-      Math.random() * (this.game.height - this.game.topMargin - this.margin);
-
-    this.image = document.querySelector(".egg");
-
-    this.spriteWidth = 110;
-    this.spriteHeight = 135;
+    this.spriteWidth = 140;
+    this.spriteHeight = 260;
 
     this.width = this.spriteWidth;
     this.height = this.spriteHeight;
+
+    this.collisionRadius = 30;
+    this.collisionX =
+      this.game.width + this.width + Math.random() * this.game.width * 0.5;
+    this.collisionY =
+      this.game.topMargin +
+      Math.random() * (this.game.height - this.game.topMargin);
 
     this.spriteX;
     this.spriteY;
@@ -48,9 +47,20 @@ class Egg {
 
   update() {
     this.spriteX = this.collisionX - this.width * 0.5;
-    this.spriteY = this.collisionY - this.height * 0.5 - 30;
+    this.spriteY = this.collisionY - this.height + 40;
 
-    const collisionObjects = [this.game.player, ...this.game.obstacles, ...this.game.enemies];
+    this.collisionX -= this.speedX;
+
+    if (this.spriteX + this.width < 0) {
+      this.collisionX =
+        this.game.width + this.width + Math.random() * this.game.width * 0.5;
+
+      this.collisionY =
+        this.game.topMargin +
+        Math.random() * (this.game.height - this.game.topMargin);
+    }
+
+    const collisionObjects = [this.game.player, ...this.game.obstacles];
 
     collisionObjects.forEach((object) => {
       const [collision, distance, sumOfRadii, dx, dy] =
@@ -67,4 +77,4 @@ class Egg {
   }
 }
 
-export { Egg };
+export { Enemy };
