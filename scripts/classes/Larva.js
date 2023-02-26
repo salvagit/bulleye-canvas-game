@@ -1,4 +1,5 @@
 import { Firefly } from "./Firefly.js";
+import { Spark } from "./Spark.js";
 
 class Larva {
   constructor(game, x, y) {
@@ -7,7 +8,7 @@ class Larva {
     this.collisionY = y;
     this.collisionRadius = 30;
 
-    this.image = document.querySelector('.larva');
+    this.image = document.querySelector(".larva");
 
     this.spriteWidth = 150;
     this.spriteHeight = 150;
@@ -24,6 +25,8 @@ class Larva {
 
     this.frameX = 0;
     this.frameY = Math.floor(Math.random() * 2);
+
+    this.particlesCount = 5;
   }
 
   draw(context) {
@@ -61,19 +64,21 @@ class Larva {
 
   update() {
     this.collisionY -= this.speedY;
-    this.spriteX = this.collisionX - this.width * .5;
-    this.spriteY = this.collisionY - this.height * .5 - 50;
+    this.spriteX = this.collisionX - this.width * 0.5;
+    this.spriteY = this.collisionY - this.height * 0.5 - 50;
 
     // move to safety;
     if (this.collisionY < this.game.topMargin) {
       this.markedForDeletion = true;
       this.game.removeGameObjects();
       this.game.score++;
-      for (let index = 0; index < 3; index++) {
-        this.game.particles.push(new Firefly(this.game, this.collisionX, this.collisionY, 'yellow'));
+      for (let index = 0; index < this.particlesCount; index++) {
+        this.game.particles.push(
+          new Firefly(this.game, this.collisionX, this.collisionY, "yellow")
+        );
       }
     }
-    
+
     // collision with objects.
     const collisionObjects = [this.game.player, ...this.game.obstacles];
 
@@ -91,13 +96,19 @@ class Larva {
     });
 
     // collision with enemies.
-    this.game.enemies.forEach(enemy => {
-      const [ collision ] = this.game.checkCollision(this, enemy);
+    this.game.enemies.forEach((enemy) => {
+      const [collision] = this.game.checkCollision(this, enemy);
 
       if (collision) {
         this.markedForDeletion = true;
         this.game.removeGameObjects();
         this.game.lostHatchLings++;
+
+        for (let index = 0; index < this.particlesCount; index++) {
+          this.game.particles.push(
+            new Spark(this.game, this.collisionX, this.collisionY, "blue")
+          );
+        }
       }
     });
   }
