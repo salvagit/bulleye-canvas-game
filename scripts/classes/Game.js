@@ -24,10 +24,10 @@ class Game {
     this.eggTimer = 0;
     this.eggInterval = 500;
 
-    this.maxEggs = 3;
+    this.maxEggs = 5;
     this.eggs = [];
 
-    this.maxEnemies = 3;
+    this.maxEnemies = this.maxEggs;
     this.enemies = [];
 
     this.gameObjects = [];
@@ -35,8 +35,12 @@ class Game {
     this.hatchLings = [];
     this.lostHatchLings = 0;
     this.score = 0;
-    
+
     this.particles = [];
+
+    this.winningScore = 30;
+
+    this.gameOver = false;
 
     this.mouse = {
       x: this.width * 0.5,
@@ -72,7 +76,30 @@ class Game {
       if (key === "d") {
         this.debug = !this.debug;
       }
+      if (key === "r") {
+        this.restart();
+      }
     });
+  }
+
+  restart() {
+    this.player.restart();
+    this.eggs = [];
+    this.enemies = [];
+    this.obstacles = [];
+    this.hatchLings = [];
+
+    this.mouse = {
+      x: this.width * 0.5,
+      x: this.height * 0.5,
+      pressed: false,
+    };
+
+    this.score = 0;
+    this.lostHatchLings = 0;
+    this.gameOver = false;
+
+    this.init();
   }
 
   render(context, deltaTime) {
@@ -106,7 +133,7 @@ class Game {
     this.timer += deltaTime;
 
     // add egg periodically
-    if (this.eggTimer > this.eggInterval && this.eggs.length < this.maxEggs) {
+    if (this.eggTimer > this.eggInterval && this.eggs.length < this.maxEggs && !this.gameOver) {
       this.addEgg();
       this.eggTimer = 0;
     } else {
@@ -115,12 +142,55 @@ class Game {
 
     // draw status text.
     context.save();
-    context.textAlign = 'left';
+    context.textAlign = "left";
     context.fillText(`Score: ${this.score}`, 35, 50);
     if (this.debug) {
       context.fillText(`Lost: ${this.lostHatchLings}`, 35, 100);
     }
     context.restore();
+
+    // win / lose message.
+    if (this.score >= this.winningScore) {
+      this.gameOver = true;
+
+      context.save();
+
+      context.fillStyle = "rgba(0, 0, 0, .5)";
+      context.fillRect(0, 0, this.width, this.height);
+
+      context.fillStyle = "white";
+      context.textAlign = "center";
+
+      context.shadowOffsetX = 4;
+      context.shadowOffsetY = 4;
+      context.shadowColor = 'black';
+      context.shadowBlur = 4;
+
+      let message1 = "";
+      let message2 = "";
+
+      if (this.lostHatchLings <= 5) {
+        message1 = "Bullseye!!";
+        message2 = "You bullied the bullies!!";
+      } else {
+        message1 = "Bullocks!";
+        message2 = `You lost ${this.lostHatchLings} hatch lings, don't be a pushover!`;
+      }
+
+      context.font = "130px Bangers";
+      context.fillText(message1, this.width / 2, this.height / 2 - 20);
+
+      context.font = "40px Bangers";
+      context.fillText(message2, this.width / 2, this.height / 2 + 30);
+
+      context.fillText(
+        `Final Score: ${this.score}, press R to butt heads again!`,
+        this.width / 2,
+        this.height / 2 + 80
+      );
+
+      context.restore();
+    }
   }
 
   checkCollision(a, b) {

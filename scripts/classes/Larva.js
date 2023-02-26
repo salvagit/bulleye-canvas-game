@@ -65,13 +65,17 @@ class Larva {
   update() {
     this.collisionY -= this.speedY;
     this.spriteX = this.collisionX - this.width * 0.5;
-    this.spriteY = this.collisionY - this.height * 0.5 - 50;
+    this.spriteY = this.collisionY - this.height * 0.5 - 40;
 
     // move to safety;
     if (this.collisionY < this.game.topMargin) {
       this.markedForDeletion = true;
       this.game.removeGameObjects();
-      this.game.score++;
+
+      if (!this.game.gameOver) {
+        this.game.score++;
+      }
+
       for (let index = 0; index < this.particlesCount; index++) {
         this.game.particles.push(
           new Firefly(this.game, this.collisionX, this.collisionY, "yellow")
@@ -80,7 +84,7 @@ class Larva {
     }
 
     // collision with objects.
-    const collisionObjects = [this.game.player, ...this.game.obstacles];
+    const collisionObjects = [this.game.player, ...this.game.obstacles, ...this.game.eggs];
 
     collisionObjects.forEach((object) => {
       const [collision, distance, sumOfRadii, dx, dy] =
@@ -99,7 +103,7 @@ class Larva {
     this.game.enemies.forEach((enemy) => {
       const [collision] = this.game.checkCollision(this, enemy);
 
-      if (collision) {
+      if (collision && !this.game.gameOver) {
         this.markedForDeletion = true;
         this.game.removeGameObjects();
         this.game.lostHatchLings++;

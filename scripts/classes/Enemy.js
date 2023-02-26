@@ -4,7 +4,7 @@ class Enemy {
 
     this.speedX = Math.random() * 3 + 0.5;
 
-    this.image = document.querySelector(".toad");
+    this.image = document.querySelector(".toads");
 
     this.spriteWidth = 140;
     this.spriteHeight = 260;
@@ -21,10 +21,23 @@ class Enemy {
 
     this.spriteX;
     this.spriteY;
+
+    this.frameX = 0;
+    this.frameY = Math.floor(Math.random() * 4);
   }
 
   draw(context) {
-    context.drawImage(this.image, this.spriteX, this.spriteY);
+    context.drawImage(
+      this.image,
+      this.frameX * this.spriteWidth,
+      this.frameY * this.spriteHeight,
+      this.spriteWidth,
+      this.spriteHeight,
+      this.spriteX,
+      this.spriteY,
+      this.width,
+      this.height,
+    );
 
     if (this.game.debug) {
       context.beginPath();
@@ -51,13 +64,15 @@ class Enemy {
 
     this.collisionX -= this.speedX;
 
-    if (this.spriteX + this.width < 0) {
+    if (this.spriteX + this.width < 0 && !this.game.gameOver) {
       this.collisionX =
         this.game.width + this.width + Math.random() * this.game.width * 0.5;
 
       this.collisionY =
         this.game.topMargin +
         Math.random() * (this.game.height - this.game.topMargin);
+
+      this.frameY = Math.floor(Math.random() * 4);
     }
 
     const collisionObjects = [this.game.player, ...this.game.obstacles];
