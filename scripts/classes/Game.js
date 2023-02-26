@@ -39,6 +39,7 @@ class Game {
     this.particles = [];
 
     this.winningScore = 30;
+    this.maxLost = 10;
 
     this.gameOver = false;
 
@@ -97,6 +98,7 @@ class Game {
 
     this.score = 0;
     this.lostHatchLings = 0;
+
     this.gameOver = false;
 
     this.init();
@@ -133,7 +135,11 @@ class Game {
     this.timer += deltaTime;
 
     // add egg periodically
-    if (this.eggTimer > this.eggInterval && this.eggs.length < this.maxEggs && !this.gameOver) {
+    if (
+      this.eggTimer > this.eggInterval &&
+      this.eggs.length < this.maxEggs &&
+      !this.gameOver
+    ) {
       this.addEgg();
       this.eggTimer = 0;
     } else {
@@ -143,14 +149,17 @@ class Game {
     // draw status text.
     context.save();
     context.textAlign = "left";
-    context.fillText(`Score: ${this.score}`, 35, 50);
+    context.fillText(`Score: ${this.score} / ${this.winningScore}`, 35, 50);
     if (this.debug) {
-      context.fillText(`Lost: ${this.lostHatchLings}`, 35, 100);
+      context.fillText(`Lost: ${this.lostHatchLings} / ${this.maxLost}`, 35, 100);
     }
     context.restore();
 
     // win / lose message.
-    if (this.score >= this.winningScore) {
+    if (
+      this.score >= this.winningScore ||
+      this.lostHatchLings >= this.maxLost
+    ) {
       this.gameOver = true;
 
       context.save();
@@ -163,13 +172,13 @@ class Game {
 
       context.shadowOffsetX = 4;
       context.shadowOffsetY = 4;
-      context.shadowColor = 'black';
+      context.shadowColor = "black";
       context.shadowBlur = 4;
 
       let message1 = "";
       let message2 = "";
 
-      if (this.lostHatchLings <= 5) {
+      if (this.lostHatchLings < this.maxLost) {
         message1 = "Bullseye!!";
         message2 = "You bullied the bullies!!";
       } else {
