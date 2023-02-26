@@ -11,7 +11,7 @@ class Player {
     this.speedModifier = 3;
 
     this.spriteWidth = 255;
-    this.spriteHeight = 255;
+    this.spriteHeight = 256;
 
     this.spriteX;
     this.spriteY;
@@ -19,8 +19,8 @@ class Player {
     this.frameX = 0;
     this.frameY = 0;
 
-    this.width = 255;
-    this.height = 255;
+    this.width = this.spriteWidth;
+    this.height = this.spriteHeight;
 
     this.image = document.querySelector(".bull");
   }
@@ -37,26 +37,29 @@ class Player {
       this.width,
       this.height
     );
-    context.beginPath();
-    context.arc(
-      this.collisionX,
-      this.collisionY,
-      this.collisionRadius,
-      0,
-      Math.PI * 2
-    );
 
-    context.save();
-    context.globalAlpha = 0.5;
-    context.fill();
-    context.restore();
+    if (this.game.debug) {
+      context.beginPath();
+      context.arc(
+        this.collisionX,
+        this.collisionY,
+        this.collisionRadius,
+        0,
+        Math.PI * 2
+      );
 
-    context.stroke();
+      context.save();
+      context.globalAlpha = 0.5;
+      context.fill();
+      context.restore();
 
-    context.beginPath();
-    context.moveTo(this.collisionX, this.collisionY);
-    context.lineTo(this.game.mouse.x, this.game.mouse.y);
-    context.stroke();
+      context.stroke();
+
+      context.beginPath();
+      context.moveTo(this.collisionX, this.collisionY);
+      context.lineTo(this.game.mouse.x, this.game.mouse.y);
+      context.stroke();
+    }
   }
 
   update() {
@@ -74,7 +77,7 @@ class Player {
     else if (angle < 1.17) this.frameY = 3;
     else if (angle < 1.96) this.frameY = 4;
     else if (angle < 2.74) this.frameY = 5;
-    
+
     const distance = Math.hypot(this.dy, this.dx);
 
     if (distance > this.speedModifier) {
@@ -90,6 +93,20 @@ class Player {
 
     this.spriteX = this.collisionX - this.width * 0.5;
     this.spriteY = this.collisionY - this.height * 0.5;
+
+    // horizontal boundaries.
+    if (this.collisionX < this.collisionRadius) {
+      this.collisionX = this.collisionRadius;
+    } else if (this.collisionX > this.game.width - this.collisionRadius) {
+      this.collisionX = this.game.width - this.collisionRadius;
+    }
+
+    // vertical boundaries.
+    if (this.collisionY < this.game.topMargin + this.collisionRadius) {
+      this.collisionY = this.game.topMargin + this.collisionRadius;
+    } else if (this.collisionY > this.game.height - this.collisionRadius) {
+      this.collisionY = this.game.height - this.collisionRadius
+    }
 
     // collisions with obstacles.
     this.game.obstacles.forEach((obstacle) => {

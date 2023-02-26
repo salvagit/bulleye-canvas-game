@@ -3,7 +3,7 @@ class Obstacle {
     this.game = game;
     this.collisionX = Math.random() * this.game.width;
     this.collisionY = Math.random() * this.game.height;
-    this.collisionRadius = 60;
+    this.collisionRadius = 40;
     this.image = document.querySelector(".obstacles");
 
     this.spriteWidth = 250;
@@ -31,21 +31,23 @@ class Obstacle {
       this.height
     );
 
-    context.beginPath();
-    context.arc(
-      this.collisionX,
-      this.collisionY,
-      this.collisionRadius,
-      0,
-      Math.PI * 2
-    );
-
-    context.save();
-    context.globalAlpha = 0.5;
-    context.fill();
-    context.restore();
-
-    context.stroke();
+    if (this.game.debug) {
+      context.beginPath();
+      context.arc(
+        this.collisionX,
+        this.collisionY,
+        this.collisionRadius,
+        0,
+        Math.PI * 2
+      );
+  
+      context.save();
+      context.globalAlpha = 0.5;
+      context.fill();
+      context.restore();
+  
+      context.stroke();
+    }
   }
 }
 
